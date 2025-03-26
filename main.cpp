@@ -5,44 +5,31 @@
 #include <stack>
 #include <utility>
 
+#include "Headers/Grid.h"
+
 /*
     TODOS:
 
         - Make SDL windows -- done with a box
         - Make a grid -- done
 
-        - Make better grid walls, currentyl walls are just padding
-            but we need to connect cells incase they are 
+        - Make better grid walls, currentyl walls are just padding - dpne
+            but we need to connect cells incase they are  - not done
 
         - Make that grid interactable
-            - alternates between color when a cell is clicked
+            - alternates between color when a cell is clicked - done
             - starting points and ending point?
             - what else?
+
+
+        Lets refactor the code right now
 
 */
 
 const int screenWidth = 1920;
 const int screenHeight = 1080;
 
-struct Cell{
-
-    int xPos = 0, yPos = 0;
-    int width, height;
-
-    SDL_Color color;
-
-    Cell(int x, int y,  int w, int h, SDL_Color col)
-    : width(w), height(h), color(col) 
-    {
-        xPos = x;
-        yPos = y;
-    }
-
-};
-
-// void CheckMouseInput(SDL_Event &e);
-
-
+void pollEvents(SDL_Event &event);
 
 int main(int argc, char* argv[]) {
     
@@ -67,40 +54,21 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Event Handling
-    SDL_Event e;
-    bool quit = false;
-
     int orderOfGrid = 20;
-
-    // 20 * 20 grid
-    int cellWidth   = 640/orderOfGrid;
-    int cellHeight  = 480/orderOfGrid;
-
     int horizontalPadding   = 5;
     int verticalPadding     = 5;
 
-    // Grid of cells
-    std::vector<Cell> Grid;
-    std::stack<Cell> gridStack;
-    std::vector<std::pair<int,int>> visitedCells;
 
-    for(int i = 0; i < orderOfGrid; i++){
-        for(int j = 0; j < orderOfGrid; j++){
-            
-            SDL_Color cellColor = {.r = 255, .g = 255, .b = 255, .a = 255}; // GREEN
-    
-            Grid.push_back({i * (cellWidth + horizontalPadding), 
-                            j * (cellHeight + verticalPadding), 
-                            cellWidth, cellHeight, cellColor});
+    Grid grid(orderOfGrid, horizontalPadding, verticalPadding, std::make_pair(640, 480));
+    grid.generateGrid();
+    std::cout << "Size of grid: " << grid.getGridSize() << " \n";
 
-        }   
-    }
-
-    std::cout << "Size of grid: " << Grid.size() << " \n";
+    SDL_Event e;
+    bool quit = false;
 
     // Main render loop
     while (!quit) {
+        
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT) {
                 quit = true;
@@ -111,57 +79,15 @@ int main(int argc, char* argv[]) {
                     quit = true;
                 }
             }
-
-            float mouseX, mouseY;
-            if(e.type == SDL_EVENT_MOUSE_MOTION){
-                
-                SDL_GetMouseState(&mouseX, &mouseY);
-                // std::cout << "Mouse Position: " << mouseX << ", " << mouseY << "\n";
-
-            }
-
-
-            if(e.type == SDL_EVENT_MOUSE_BUTTON_DOWN){
-                
-                SDL_GetMouseState(&mouseX, &mouseY);
-                if(e.button.button == SDL_BUTTON_LEFT){
-
-                    int mX = (int)mouseX/(cellWidth + horizontalPadding);
-                    int mY = (int)mouseY/(cellHeight + verticalPadding);
-
-                    std::cout << "Cell Position: " << mX << ", " << mY << "\n";
-
-                    std::cout << "Mouse button left pressed\n";
-                    if((mX < 20 && mX > 0) && (mY < 20 && mY > 0)){
-                    Grid[mY + (mX * 20)].color = {.r = 255, .g = 0, .b = 0, .a = 0};
-                    }
-                }
+            grid.handleMouseInput(e);
         }
-
-
-
-        }
-
 
         SDL_SetRenderDrawColor(ren, 0, 0, 0, 255); // Set render draw color to black
         SDL_RenderClear(ren); // Clear the renderer
 
-        
-        for(int i = 0; i < Grid.size(); i++){
-            Cell currentCell = Grid[i];
-            SDL_FRect currentRectanlge;
-
-            currentRectanlge.x = currentCell.xPos;
-            currentRectanlge.y = currentCell.yPos;
-            currentRectanlge.w = currentCell.width;
-            currentRectanlge.h = currentCell.height;
-
-            // Set render draw color to green
-            SDL_SetRenderDrawColor(ren, currentCell.color.r, currentCell.color.g, currentCell.color.b, currentCell.color.a); 
-            SDL_RenderFillRect(ren, &currentRectanlge); // Render the rectangle
-        }
-
-
+        // Drawing grid based on position and color
+        grid.drawGrid(ren);
+       
         SDL_RenderPresent(ren); // Render the screen
     }
 
@@ -171,4 +97,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
