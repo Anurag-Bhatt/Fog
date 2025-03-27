@@ -21,8 +21,16 @@
             - starting points and ending point?
             - what else?
 
+        Lets refactor the code right now -- done for now
 
-        Lets refactor the code right now
+        Implement the maze building algos
+
+        TODO: Export the current grid state as a png - not very important but seemse very fun
+
+
+        - Reset Button - Key R
+            -- ## Animating the cells requires to redraw the cell, which requires ren so 
+                the algorightm code needs to solve this.
 
 */
 
@@ -79,7 +87,7 @@ int main(int argc, char* argv[]) {
                     quit = true;
                 }
             }
-            grid.handleMouseInput(e);
+            grid.handleInput(e);
         }
 
         SDL_SetRenderDrawColor(ren, 0, 0, 0, 255); // Set render draw color to black

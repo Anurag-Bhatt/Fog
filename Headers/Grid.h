@@ -9,6 +9,8 @@
 #include <Cell.h>
 
 #include <SDL3/SDL_events.h>
+#include <SDL3/SDL_timer.h>
+
 
 class Grid{
 
@@ -21,18 +23,20 @@ public:
 
     int getGridSize();
     int getGridOrder();
-    void handleMouseInput(SDL_Event &e);
 
+    void handleInput(SDL_Event &e);
+
+    void handleMouseInput(SDL_Event &e);
+    void handleKyeboardInput(SDL_Event &e);
 
 
 private:
 
     std::vector<Cell> m_cells;
+    std::pair<int,int> m_gridDimensions;
 
     int m_gridSize;
     int m_gridOrder;
-
-    std::pair<int,int> m_gridDimensions;
 
     int m_cellWidth;
     int m_cellHeight;
@@ -40,6 +44,9 @@ private:
     int m_cellVerticalPadding;
 
     SDL_Color m_cellColor;
+
+    SDL_Color m_OccupiedColor;
+    SDL_Color m_UnoccupiedColor;
 
     // Will use later while making algorithm
     std::stack<Cell> m_gridStack;

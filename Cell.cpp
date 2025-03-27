@@ -35,6 +35,11 @@ void Cell::setColor(SDL_Color cellColor)
     m_color = cellColor;
 }
 
+SDL_Color Cell::getColor()
+{
+    return m_color;
+}
+
 bool Cell::isMouseInside(float mouseX, float mouseY)
 {
     return ((mouseX >= m_cell.x && mouseX < m_cell.x + m_cell.w) &&

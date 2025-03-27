@@ -24,6 +24,7 @@ public:
     void setWalls(Walls wall);
 
     void setColor(SDL_Color cellColor);
+    SDL_Color getColor();
     bool isMouseInside(float mouseX, float mouseY);
 
 private:
